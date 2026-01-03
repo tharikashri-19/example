@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Current Location (MapLibre)</title>
+
+    <!-- MapLibre CSS -->
+    <link
+      href="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      #map {
+        height: 500px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>My Current Location</h2>
+    <div id="map"></div>
+
+    <!-- MapLibre JS -->
+    <script src="https://unpkg.com/maplibre-gl@3.5.2/dist/maplibre-gl.js"></script>
+
+    <script>
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            const map = new maplibregl.Map({
+              container: "map",
+              style: {
+                version: 8,
+                sources: {
+                  osm: {
+                    type: "raster",
+                    tiles: [
+                      "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      "https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      "https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    ],
+                    tileSize: 256,
+                  },
+                },
+                layers: [
+                  {
+                    id: "osm",
+                    type: "raster",
+                    source: "osm",
+                  },
+                ],
+              },
+              center: [lng, lat],
+              zoom: 15,
+            });
+
+            new maplibregl.Marker().setLngLat([lng, lat]).addTo(map);
+
+            map.addControl(new maplibregl.NavigationControl());
+          },
+          function () {
+            alert("Location permission denied");
+          }
+        );
+      }
+    </script>
+  </body>
+</html>
